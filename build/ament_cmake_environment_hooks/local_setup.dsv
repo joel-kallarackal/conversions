@@ -1,0 +1,3 @@
+source;share/conversions/environment/ament_prefix_path.sh
+source;share/conversions/environment/path.sh
+source;share/conversions/environment/pythonpath.sh
