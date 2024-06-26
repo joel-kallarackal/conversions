@@ -9,7 +9,7 @@ from autoware_control_msgs.msg import Control
 import numpy as np
 
 class Converter(Node):
-    def __init__(self, l=2, t=2):
+    def __init__(self, l=2.79, t=1.64):
         super().__init__('waypoint_gen')
         
         # Publishers
@@ -34,8 +34,22 @@ class Converter(Node):
             
         cmd_vel = Twist()
         
-        cmd_vel.linear.x = v
-        cmd_vel.angular.z = v/(self.l*np.sqrt(1+(np.sec(delta)**2)))
+        # Wheel velocities
+        vl = v - (self.t*delta)/2
+        vr = v + (self.t*delta)/2
+        
+        # Angular velocities of wheels
+        wl = vl/self.r
+        wr = vr/self.r
+        
+        # Twist Linear x
+        V = self.r*(wl+wr)/2
+        
+        # Twist Angular z
+        W = self.r*(wr-wl)/self.t
+        
+        cmd_vel.linear.x  = V
+        cmd_vel.angular.z = W
             
         self.differential_pub.publish(cmd_vel)
             
